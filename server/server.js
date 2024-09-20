@@ -13,12 +13,19 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+// CORS Configuration
+const corsOptions = {
+  origin: 'https://contacts-management-web.vercel.app', // Allow only your frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  credentials: true, // Allow cookies and authorization headers
+};
+app.use(cors(corsOptions));
 
 // Routes
-app.get('/',(req,res)=> {
-    res.send('Working')
-})
+app.get('/', (req, res) => {
+  res.send('Working');
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/messages', messageRoutes);
