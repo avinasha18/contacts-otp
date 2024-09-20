@@ -16,6 +16,9 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
+app.get('/',(req,res)=> {
+    res.send('Working')
+})
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/messages', messageRoutes);
