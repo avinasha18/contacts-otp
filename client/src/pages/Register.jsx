@@ -24,7 +24,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('${api}/api/auth/register', user);
+      const response = await axios.post(`${api}/api/auth/register`, user);
       if (response.data.token) {
         // Store JWT in localStorage
         localStorage.setItem('token', response.data.token);
