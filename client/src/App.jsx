@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -7,6 +7,7 @@ import Contacts from './pages/Contacts';
 import SentMessages from './pages/SentMessages';
 import Sidebar from './components/Sidebar';
 import ContactDetails from './pages/ContactDetails';
+import { useLocation } from 'react-router-dom';
 
 // Component for handling protected routes
 const PrivateRoute = ({ element }) => {
@@ -14,9 +15,19 @@ const PrivateRoute = ({ element }) => {
   return token ? element : <Navigate to="/login" />;
 };
 
+// Main App component
 function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+// Content of the App
+const AppContent = () => {
   const location = useLocation();  // Get the current route location
-  
+
   // Determine if the user is on login or register pages
   const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
 
