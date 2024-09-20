@@ -36,8 +36,8 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="w-full flex items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-black">
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
         {error && (
@@ -54,7 +54,7 @@ const Register = () => {
               name="name"
               value={user.name}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:ring-blue-500"
+              className="w-full p-2 border text-gray-600 border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:ring-blue-500"
               required
             />
           </div>
