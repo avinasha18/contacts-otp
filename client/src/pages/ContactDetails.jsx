@@ -38,7 +38,7 @@ const ContactDetails = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        '${api}/api/contacts/send-otp',
+        `${api}/api/contacts/send-otp`,
         { contactId: id, message },
         { headers: { Authorization: `Bearer ${token}` } }
       );

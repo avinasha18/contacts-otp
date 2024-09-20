@@ -16,7 +16,7 @@ app.use(express.json());
 
 // CORS Configuration
 const corsOptions = {
-  origin: ['https://contacts-management-web.vercel.app','https://contacts-management-web.vercel.app','https://contacts-otp-ig7a-tejassriavinashagmailcoms-projects.vercel.app/login'] ,// Allow only your frontend
+  origin: ['https://contacts-management-web.vercel.app','https://contacts-management-web.vercel.app','https://contacts-otp-ig7a-tejassriavinashagmailcoms-projects.vercel.app/login','http://localhost:5173'] ,// Allow only your frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   credentials: true, // Allow cookies and authorization headers
 };
