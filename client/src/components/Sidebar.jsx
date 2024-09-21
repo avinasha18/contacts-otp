@@ -37,7 +37,7 @@ const Sidebar = () => {
         <SidebarItem
           icon={FaClipboardList}
           label="Contact List"
-          to="/"
+          to="/contacts"
           isCollapsed={isCollapsed}
         />
         <SidebarItem

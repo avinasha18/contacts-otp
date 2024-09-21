@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const handleLogoutClick = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   };
 
   const toggleMobileMenu = () => {
@@ -62,7 +62,7 @@ const Navbar = () => {
           </button>
           {isLoggedIn ? (
             <>
-              <Link to="/" className="btn">
+              <Link to="/contacts" className="btn">
                 Contacts
               </Link>
               <Link to="/sent-messages" className="btn">
@@ -74,7 +74,7 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex gap-5">
-              <Link to="/login" className="btn">
+              <Link to="/" className="btn">
                 Login
               </Link>
               <Link to="/register" className="btn">
@@ -121,7 +121,7 @@ const Navbar = () => {
                 </>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <Link to="/login" className="btn" onClick={toggleMobileMenu}>
+                  <Link to="/" className="btn" onClick={toggleMobileMenu}>
                     Login
                   </Link>
                   <Link to="/register" className="btn" onClick={toggleMobileMenu}>

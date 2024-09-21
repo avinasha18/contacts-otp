@@ -12,7 +12,7 @@ import { useLocation } from 'react-router-dom';
 // Component for handling protected routes
 const PrivateRoute = ({ element }) => {
   const token = localStorage.getItem('token');
-  return token ? element : <Navigate to="/login" />;
+  return token ? element : <Navigate to="/" />;
 };
 
 // Main App component
@@ -38,10 +38,10 @@ const AppContent = () => {
         {/* Render the Sidebar only if not on login or register pages */}
         {!hideSidebar && <Sidebar />}
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* Protect these routes */}
-          <Route path="/" element={<PrivateRoute element={<Contacts />} />} />
+          <Route path="/contacts" element={<PrivateRoute element={<Contacts />} />} />
           <Route path="/contact/:id" element={<PrivateRoute element={<ContactDetails />} />} />
           <Route path="/sent-messages" element={<PrivateRoute element={<SentMessages />} />} />
         </Routes>
