@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext'; // Import ThemeContext for theme toggle
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { api } from '../api/api';
+
 const ContactDetails = () => {
   const { id } = useParams();
   const { isDarkMode } = useTheme(); // Access dark mode status from ThemeContext
@@ -12,6 +13,7 @@ const ContactDetails = () => {
   const [message, setMessage] = useState('');
   const [openModal, setOpenModal] = useState(false);
   const [sendingStatus, setSendingStatus] = useState('');
+  const [isSending, setIsSending] = useState(false); // State to track sending status
 
   useEffect(() => {
     fetchContactDetails();
@@ -35,31 +37,62 @@ const ContactDetails = () => {
   };
 
   const handleSendMessage = async () => {
+    setIsSending(true); // Set sending state to true when the process starts
     try {
       const token = localStorage.getItem('token');
-      await axios.post(
-        `${api}/api/contacts/send-otp`,
-        { contactId: id, message },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.post(`${api}/api/contacts/send-otp`, { contactId: id, message }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      // Show success message
       setSendingStatus('Message sent successfully!');
+      setIsSending(false); // Reset sending state
     } catch (error) {
-      console.error('Error sending message:', error);
-      setSendingStatus(`Failed to send message: ${error.response?.data?.message || 'Unknown error'}`);
+      const backendMessage = error.response?.data?.message || 'Unknown error occurred';
+  
+      // Handle specific Twilio error message related to unverified numbers
+      if (backendMessage.includes('unverified number')) {
+        setSendingStatus(
+          'Sorry, the phone number is not verified by Twilio. We are using a free version, so please verify the number on Twilio before proceeding.'
+        );
+      } else {
+        // Handle other generic errors
+        setSendingStatus(`Failed to send message: ${backendMessage}`);
+      }
+      setIsSending(false); // Reset sending state
     }
+    
+    // Open a modal to show the result
     setOpenModal(true);
   };
-
+  
   const handleCloseModal = () => {
     setOpenModal(false);
     setSendingStatus('');
   };
 
-  if (!contact) return <div className="text-center text-lg font-bold">Loading...</div>;
+  // Skeleton loader for contact card
+  const renderSkeleton = () => (
+    <div className="animate-pulse w-full max-w-lg rounded-lg shadow-lg p-6">
+      <div className="h-8 bg-gray-300 rounded w-1/2 mb-4"></div>
+      <div className="h-6 bg-gray-300 rounded w-1/3 mb-2"></div>
+      <div className="h-6 bg-gray-300 rounded w-1/2 mb-4"></div>
+      <div className="h-32 bg-gray-300 rounded mb-4"></div>
+      <div className="h-12 bg-blue-300 rounded-lg"></div>
+    </div>
+  );
+
+  if (!contact) {
+    return (
+      <div className={`w-full min-h-screen flex flex-col items-center py-8 px-4 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
+        {renderSkeleton()}
+      </div>
+    );
+  }
 
   return (
     <div className={`w-full min-h-screen flex flex-col items-center py-8 px-4 ${isDarkMode ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
-      <div className={`${isDarkMode ? 'bg-black' : 'bg-white'} w-full max-w-lg  rounded-lg shadow-lg p-6`}>
+      <div className={`${isDarkMode ? 'bg-black' : 'bg-white'} w-full max-w-lg rounded-lg shadow-lg p-6`}>
         <h1 className="text-3xl font-bold mb-4">{contact.firstName} {contact.lastName}</h1>
         <p className="mb-2"><span className="font-semibold">Phone:</span> {contact.phone}</p>
         <p className="mb-4"><span className="font-semibold">Email:</span> {contact.email}</p>
@@ -72,17 +105,21 @@ const ContactDetails = () => {
         />
 
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`w-full py-3 rounded-lg text-lg font-semibold ${isDarkMode ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-blue-500 hover:bg-blue-400 text-white'} transition-colors`}
+          whileHover={{ scale: isSending ? 1 : 1.05 }}
+          whileTap={{ scale: isSending ? 1 : 0.95 }}
+          className={`w-full py-3 rounded-lg text-lg font-semibold ${isSending ? 'bg-gray-500 cursor-not-allowed' : (isDarkMode ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-blue-500 hover:bg-blue-400 text-white')} transition-colors`}
           onClick={handleSendMessage}
+          disabled={isSending} // Disable button while sending
         >
-          Send Message
+          {isSending ? 'Sending...' : 'Send Message'}
         </motion.button>
       </div>
 
+      {/* Error or Success Modal */}
       <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogTitle className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>Message Status</DialogTitle>
+        <DialogTitle className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+          Message Status
+        </DialogTitle>
         <DialogContent className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
           <p>{sendingStatus}</p>
         </DialogContent>

@@ -7,11 +7,13 @@ import { api } from '../api/api';
 const Contacts = () => {
   const { isDarkMode } = useTheme();
   const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // For skeleton loader
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openNewContactModal, setOpenNewContactModal] = useState(false);
   const [newContact, setNewContact] = useState({ firstName: '', lastName: '', phone: '', email: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false); // For button state
   const contactsPerPage = 10;
 
   useEffect(() => {
@@ -19,6 +21,7 @@ const Contacts = () => {
   }, [page, searchTerm]);
 
   const fetchContacts = async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${api}/api/contacts?page=${page}&limit=${contactsPerPage}&search=${searchTerm}`, {
@@ -29,6 +32,7 @@ const Contacts = () => {
     } catch (error) {
       console.error('Error fetching contacts:', error);
     }
+    setIsLoading(false);
   };
 
   const handleSearch = (event) => {
@@ -41,10 +45,23 @@ const Contacts = () => {
   };
 
   const handleNewContactChange = (event) => {
-    setNewContact({ ...newContact, [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+    if (name === 'phone') {
+      const formattedPhone = value.replace(/[^0-9]/g, '');
+      if (formattedPhone.length <= 10) {
+        setNewContact({ ...newContact, phone: formattedPhone });
+      }
+    } else {
+      setNewContact({ ...newContact, [name]: value });
+    }
   };
 
   const handleCreateNewContact = async () => {
+    if (newContact.phone.length !== 10) {
+      alert('Please enter a valid 10-digit phone number.');
+      return;
+    }
+    setIsSubmitting(true); // Disable button while submitting
     try {
       const token = localStorage.getItem('token');
       await axios.post(`${api}/api/contacts`, newContact, {
@@ -56,7 +73,15 @@ const Contacts = () => {
     } catch (error) {
       console.error('Error creating new contact:', error);
     }
+    setIsSubmitting(false); // Re-enable button after submission
   };
+
+  const skeletonLoader = Array.from({ length: 5 }).map((_, index) => (
+    <div key={index} className="mb-2 p-4 rounded shadow bg-gray-300 animate-pulse">
+      <div className="h-4 bg-gray-400 rounded w-1/3 mb-2"></div>
+      <div className="h-4 bg-gray-400 rounded w-2/3"></div>
+    </div>
+  ));
 
   return (
     <div className={`mx-auto p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800 w-full'}`}>
@@ -71,21 +96,26 @@ const Contacts = () => {
         />
         <button
           onClick={() => setOpenNewContactModal(true)}
-          className="ml-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200"
+          className={`ml-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 ${isSubmitting && 'opacity-50 cursor-not-allowed'}`}
+          disabled={isSubmitting}
         >
-          Add New Contact
+          {isSubmitting ? 'Adding...' : 'Add New Contact'}
         </button>
       </div>
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact._id} className={`mb-2 p-4 rounded shadow ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} transition-transform transform hover:scale-105`}>
-            <Link to={`/contact/${contact._id}`} className="block">
-              <h2 className="text-lg font-semibold">{`${contact.firstName} ${contact.lastName}`}</h2>
-              <p className="text-gray-500">{contact.phone}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+
+      {isLoading ? skeletonLoader : (
+        <ul>
+          {contacts.map((contact) => (
+            <li key={contact._id} className={`mb-2 p-4 rounded shadow ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} transition-transform transform hover:scale-105`}>
+              <Link to={`/contact/${contact._id}`} className="block">
+                <h2 className="text-lg font-semibold">{`${contact.firstName} ${contact.lastName}`}</h2>
+                <p className="text-gray-500">{contact.phone}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <div className="flex justify-center mt-4">
         {Array.from({ length: totalPages }, (_, index) => (
           <button
@@ -109,14 +139,16 @@ const Contacts = () => {
                 name={field}
                 type={field === 'phone' ? 'tel' : field === 'email' ? 'email' : 'text'}
                 placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                value={newContact[field]}
+                value={newContact[field]} 
                 onChange={handleNewContactChange}
                 className={`mb-4 w-full p-2 rounded border ${isDarkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-800 border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
             ))}
             <div className="flex justify-end">
               <button onClick={() => setOpenNewContactModal(false)} className="mr-2 py-2 px-4 rounded border border-gray-400 hover:bg-gray-200">Cancel</button>
-              <button onClick={handleCreateNewContact} className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Create</button>
+              <button onClick={handleCreateNewContact} className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating...' : 'Create'}
+              </button>
             </div>
           </div>
         </div>

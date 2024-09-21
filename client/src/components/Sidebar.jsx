@@ -33,22 +33,17 @@ const Sidebar = () => {
         </IconButton>
       </div>
       <ul className="mt-6">
-        <SidebarItem
-          icon={FaUser}
-          label="My Profile"
-          to="/profile"
-          isCollapsed={isCollapsed}
-        />
+       
         <SidebarItem
           icon={FaClipboardList}
           label="Contact List"
-          to="/contacts"
+          to="/"
           isCollapsed={isCollapsed}
         />
         <SidebarItem
           icon={FaEnvelope}
           label="Messages"
-          to="/messages"
+          to="/sent-messages"
           isCollapsed={isCollapsed}
         />
       </ul>
