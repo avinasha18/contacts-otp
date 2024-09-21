@@ -26,10 +26,10 @@ function App() {
 
 // Content of the App
 const AppContent = () => {
-  const location = useLocation();  // Get the current route location
+  const location = useLocation(); 
 
   // Determine if the user is on login or register pages
-  const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
+  const hideSidebar = location.pathname === '/' || location.pathname === '/register';
 
   return (
     <div className="flex flex-col h-screen bg-white text-gray-100 w-full">
