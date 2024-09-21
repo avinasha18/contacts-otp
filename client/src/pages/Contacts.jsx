@@ -84,7 +84,7 @@ const Contacts = () => {
   ));
 
   return (
-    <div className={`mx-auto p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800 w-full'}`}>
+    <div className={`mx-auto p-6 w-full ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800 w-full'}`}>
       <h1 className="text-3xl font-bold mb-6">Contacts</h1>
       <div className="flex justify-between mb-4">
         <input
