@@ -111,3 +111,42 @@ export const createContact = async (req, res) => {
     res.status(500).json({ message: 'Error creating contact', error: error.message });
   }
 };
+export const createContacts = async (req, res) => {
+  const contactsData = req.body; // Expecting an array of contacts
+  const validContacts = [];
+  const errors = [];
+
+  for (const contact of contactsData) {
+    const { firstName, lastName, phone, email } = contact;
+
+    // Validate phone number (10 digits)
+    if (!/^\d{10}$/.test(phone)) {
+      errors.push(`Invalid phone number for ${firstName} ${lastName}: ${phone}`);
+      continue; // Skip to the next contact
+    }
+
+    // Format phone number to include country code
+    const formattedPhone = `+91${phone}`;
+
+    const newContact = new Contact({
+      firstName,
+      lastName,
+      phone: formattedPhone,
+      email,
+    });
+
+    try {
+      await newContact.save();
+      validContacts.push(newContact);
+    } catch (error) {
+      errors.push(`Error saving contact ${firstName} ${lastName}: ${error.message}`);
+    }
+  }
+
+  // Send response with valid contacts and any errors encountered
+  res.status(201).json({
+    message: 'Contacts processed',
+    validContacts,
+    errors,
+  });
+};

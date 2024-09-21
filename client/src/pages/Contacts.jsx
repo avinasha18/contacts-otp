@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '../context/ThemeContext';
 import { api } from '../api/api';
+import UploadContacts from '../components/UploadContacts'; // Import the new component
 
 const Contacts = () => {
   const { isDarkMode } = useTheme();
@@ -15,6 +16,7 @@ const Contacts = () => {
   const [newContact, setNewContact] = useState({ firstName: '', lastName: '', phone: '', email: '' });
   const [isSubmitting, setIsSubmitting] = useState(false); // For button state
   const contactsPerPage = 10;
+  const [openUploadModal, setOpenUploadModal] = useState(false); // Modal state for file upload
 
   useEffect(() => {
     fetchContacts();
@@ -94,13 +96,22 @@ const Contacts = () => {
           onChange={handleSearch}
           className={`w-2/3 p-2 rounded border ${isDarkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-white text-gray-800 border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
         />
-        <button
-          onClick={() => setOpenNewContactModal(true)}
-          className={`ml-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 ${isSubmitting && 'opacity-50 cursor-not-allowed'}`}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Adding...' : 'Add New Contact'}
-        </button>
+        <div>
+          <button
+            onClick={() => setOpenNewContactModal(true)}
+            className={`ml-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200 ${isSubmitting && 'opacity-50 cursor-not-allowed'}`}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Adding...' : 'Add New Contact'}
+          </button>
+          <button
+            onClick={() => setOpenUploadModal(true)}
+            className="ml-4 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition duration-200"
+          >
+            Upload JSON
+          </button>
+        </div>
+      
       </div>
 
       {isLoading ? skeletonLoader : (
@@ -128,6 +139,8 @@ const Contacts = () => {
           </button>
         ))}
       </div>
+
+      {openUploadModal && <UploadContacts onClose={() => setOpenUploadModal(false)} fetchContacts={fetchContacts} />}
 
       {openNewContactModal && (
         <div className={`fixed inset-0 flex items-center justify-center z-50 ${isDarkMode ? 'bg-black bg-opacity-70' : 'bg-gray-300 bg-opacity-70'}`}>
