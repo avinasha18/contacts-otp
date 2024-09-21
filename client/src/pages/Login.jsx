@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../api/api';
+import React, { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../api/api";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("token");
+  if (token) {
+    navigate("/contacts");
+  }
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -16,10 +19,10 @@ const Login = () => {
         email,
         password,
       });
-      localStorage.setItem('token', res.data.token);
-      navigate('/contacts');
+      localStorage.setItem("token", res.data.token);
+      navigate("/contacts");
     } catch (err) {
-      setError('Invalid credentials');
+      setError("Invalid credentials");
     }
   };
 
@@ -30,7 +33,12 @@ const Login = () => {
         <form onSubmit={handleLogin} className="space-y-4">
           {error && <p className="text-red-500">{error}</p>}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600">Email</label>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-600"
+            >
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -41,7 +49,9 @@ const Login = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium">
+              Password
+            </label>
             <input
               type="password"
               id="password"
@@ -58,7 +68,7 @@ const Login = () => {
             Login
           </button>
         </form>
-        <Link to='/register'>Register</Link>
+        <Link to="/register">Register</Link>
       </div>
     </div>
   );
