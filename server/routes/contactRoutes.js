@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', auth, getContacts);
 router.get('/:id', auth, getContactById);
 router.post('/', auth, createContact);
-app.post('/api/contacts/bulk',auth, createContacts);
+router.post('/api/contacts/bulk',auth, createContacts);
 
 router.post('/send-otp', auth, sendOTP);
 
