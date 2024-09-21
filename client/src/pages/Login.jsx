@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/api";
@@ -8,10 +8,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  if (token) {
-    navigate("/contacts");
-  }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/contacts");
+    }
+  }, [navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -68,7 +72,9 @@ const Login = () => {
             Login
           </button>
         </form>
-        <Link to="/register">Register</Link>
+        <Link to="/register" className="block text-center mt-4">
+          Register
+        </Link>
       </div>
     </div>
   );
