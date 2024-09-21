@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { api } from '../api/api';
 
@@ -102,6 +102,7 @@ const Register = () => {
             Register
           </button>
         </form>
+        <Link to='/'>Login</Link>
       </div>
     </div>
   );
