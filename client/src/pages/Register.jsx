@@ -28,7 +28,7 @@ const Register = () => {
       if (response.data.token) {
         // Store JWT in localStorage
         localStorage.setItem('token', response.data.token);
-        navigate('/dashboard'); // Redirect to a protected route after registration
+        navigate('/'); // Redirect to a protected route after registration
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
